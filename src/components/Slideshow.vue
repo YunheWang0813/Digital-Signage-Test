@@ -1,5 +1,8 @@
 <template>
     <div>
+        <ul>
+            <li v-for="(item, index) in fbdata" :key="index">{{item.title}}</li>
+        </ul>
         <button @click="nextSlide">next</button>
         <transition name="slide">
             <p :key="products[product]">{{products[product]}}</p>
@@ -9,11 +12,13 @@
 </template>
 
 <script lang="ts">
-    import {Component, Emit, Prop, Vue} from 'vue-property-decorator'
+    import {Component, Emit, Prop, Vue} from 'vue-property-decorator';
+    import db from '@/firebase/init';
 
     @Component
-    export default class Slideshow extends Vue{
+    export default class Slideshow extends Vue {
         private products: string[] = ['a', 'b', 'c'];
+        private fbdata: object[] = [];
         private product: number = 0;
         private timer: number = 0;
 
@@ -23,6 +28,7 @@
 
         private mounted(): void {
             this.onTimer();
+            this.GetBoardPosts();
         }
 
         private nextSlide(): void {
@@ -42,6 +48,18 @@
                 clearInterval(this.timer);
                 this.timer = 0;
             }
+        }
+
+        private GetBoardPosts(): void {
+            const ref = db.collection('BoardPost').get()
+            .then((snapshot: any) => {
+                snapshot.forEach((doc: any) => {
+                    const post = doc.data();
+                    post.id = doc.id;
+                    this.fbdata.push(post);
+                });
+            });
+            console.log('why', this.fbdata);
         }
     }
 </script>
