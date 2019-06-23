@@ -1,11 +1,15 @@
 <template>
     <div>
         <ul>
-            <li v-for="(item, index) in fbdata" :key="index">{{item.title}}</li>
+            <li> {{fbdata[product]}}</li>
+            <li> {{product}} </li>
         </ul>
         <button @click="nextSlide">next</button>
-        <transition name="slide">
+        <!-- <transition name="slide">
             <p :key="products[product]">{{products[product]}}</p>
+        </transition> -->
+        <transition name="slide">
+            <p :key="fbdata[product].title" v-if="fbdata[product]">{{fbdata[product].title}}</p>
         </transition>
         <button @click="offTimer">{{btnString}}</button>
     </div>
@@ -17,7 +21,7 @@
 
     @Component
     export default class Slideshow extends Vue {
-        private products: string[] = ['a', 'b', 'c'];
+        // private products: string[] = ['a', 'b', 'c'];
         private fbdata: object[] = [];
         private product: number = 0;
         private timer: number = 0;
@@ -26,13 +30,16 @@
             return this.timer === 0 ? 'start' : 'stop';
         }
 
-        private mounted(): void {
-            this.onTimer();
+        private created(): void {
             this.GetBoardPosts();
         }
 
+        private mounted(): void {
+            this.onTimer();
+        }
+
         private nextSlide(): void {
-            this.product = this.product < this.products.length - 1 ? this.product += 1 : 0;
+            this.product = this.product < this.fbdata.length - 1 ? this.product += 1 : 0;
         }
 
         private onTimer(): void {
